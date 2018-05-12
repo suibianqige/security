@@ -1,6 +1,7 @@
 package io.renren.modules.sys.dao;
 
 import io.renren.modules.sys.entity.SysDeptEntity;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * @email sunlightcs@gmail.com
  * @date 2017-06-20 15:23:47
  */
+@Repository
 public interface SysDeptDao extends BaseDao<SysDeptEntity> {
 
     /**

@@ -5,8 +5,10 @@ import io.renren.common.annotation.DataFilter;
 import io.renren.modules.sys.dao.SysDeptDao;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.service.SysDeptService;
+import io.renren.modules.sys.service.SysRoleDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,9 @@ import java.util.Map;
 public class SysDeptServiceImpl implements SysDeptService {
 	@Autowired
 	private SysDeptDao sysDeptDao;
-	
+
+	@Autowired
+	private SysRoleDeptService sysRoleDeptService;
 	@Override
 	public SysDeptEntity queryObject(Long deptId){
 		return sysDeptDao.queryObject(deptId);
@@ -30,8 +34,10 @@ public class SysDeptServiceImpl implements SysDeptService {
 	}
 	
 	@Override
+	@Transactional
 	public void save(SysDeptEntity sysDept){
 		sysDeptDao.save(sysDept);
+		sysRoleDeptService.saveOrUpdate(sysDept.getDeptId(), sysDept.getRoleIdList());
 	}
 	
 	@Override

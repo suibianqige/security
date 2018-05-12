@@ -24,6 +24,8 @@ public class SysDeptEntity implements Serializable {
 	private String parentName;
 	//排序
 	private Integer orderNum;
+	//角色id列表
+	private List<Long> roleIdList;
 	/**
 	 * ztree属性
 	 */
@@ -98,5 +100,13 @@ public class SysDeptEntity implements Serializable {
 
 	public void setList(List<?> list) {
 		this.list = list;
+	}
+
+	public List<Long> getRoleIdList() {
+		return roleIdList;
+	}
+
+	public void setRoleIdList(List<Long> roleIdList) {
+		this.roleIdList = roleIdList;
 	}
 }

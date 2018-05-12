@@ -4,6 +4,7 @@ import io.renren.common.utils.Constant;
 import io.renren.common.utils.R;
 import io.renren.modules.sys.entity.SysDeptEntity;
 import io.renren.modules.sys.service.SysDeptService;
+import io.renren.modules.sys.service.SysRoleDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,9 @@ import java.util.List;
 public class SysDeptController extends AbstractController {
 	@Autowired
 	private SysDeptService sysDeptService;
-	
+
+	@Autowired
+	private SysRoleDeptService sysRoleDeptService;
 	/**
 	 * 列表
 	 */
@@ -82,7 +85,8 @@ public class SysDeptController extends AbstractController {
 	@RequiresPermissions("sys:dept:info")
 	public R info(@PathVariable("deptId") Long deptId){
 		SysDeptEntity dept = sysDeptService.queryObject(deptId);
-		
+		List<Long> roleIdList = sysRoleDeptService.queryDeptIdList(deptId);
+		dept.setRoleIdList(roleIdList);
 		return R.ok().put("dept", dept);
 	}
 	
@@ -93,7 +97,6 @@ public class SysDeptController extends AbstractController {
 	@RequiresPermissions("sys:dept:save")
 	public R save(@RequestBody SysDeptEntity dept){
 		sysDeptService.save(dept);
-		
 		return R.ok();
 	}
 	

@@ -18,10 +18,12 @@ var vm = new Vue({
     data:{
         showList: true,
         title: null,
+        roleList:{},
         dept:{
             parentName:null,
             parentId:0,
-            orderNum:0
+            orderNum:0,
+            roleIdList:[]
         }
     },
     methods: {
@@ -38,7 +40,11 @@ var vm = new Vue({
         add: function(){
             vm.showList = false;
             vm.title = "新增";
-            vm.dept = {parentName:null,parentId:0,orderNum:0};
+            vm.roleList = {};
+            vm.dept = {parentName:null,parentId:0,orderNum:0,roleIdList:[]};
+            $.get(baseURL + "sys/role/select", function(r){
+                vm.roleList = r.list;
+            });
             vm.getDept();
         },
         update: function () {
@@ -52,6 +58,9 @@ var vm = new Vue({
                 vm.title = "修改";
                 vm.dept = r.dept;
 
+                $.get(baseURL + "sys/role/select", function(r) {
+                    vm.roleList = r.list;
+                })
                 vm.getDept();
             });
         },
@@ -80,6 +89,14 @@ var vm = new Vue({
         },
         saveOrUpdate: function (event) {
             var url = vm.dept.deptId == null ? "sys/dept/save" : "sys/dept/update";
+
+            var id = document.getElementsByName('roleId');
+            var value = new Array();
+            for(var i = 0; i < id.length; i++) {
+                if (id[i].checked)
+                    value.push(id[i].value);
+            }
+            vm.dept.roleIdList = value;
             $.ajax({
                 type: "POST",
                 url: baseURL + url,
