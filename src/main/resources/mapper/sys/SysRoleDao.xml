@@ -48,6 +48,7 @@
 			`role_id`, 
 			`role_name`, 
 			`remark`,
+			`user_id`,
 			`create_time`
 		)
 		values
@@ -55,6 +56,7 @@
 			#{roleId}, 
 			#{roleName}, 
 			#{remark},
+			#{createId},
 			#{createTime}
 		)
 	</insert>
@@ -89,5 +91,59 @@
 			#{roleId}
 		</foreach>
 	</delete>
+
+	<select id="queryList2" resultType="io.renren.modules.sys.entity.SysRoleEntity">
+		select role.* from sys_user_role r,sys_role role
+		<where>
+            r.role_id = role.role_id
+			<if test="roleName != null and roleName.trim() != ''">
+				and r.`role_name` like concat('%',#{roleName},'%')
+			</if>
+
+			<!--  数据过滤  -->
+			<if test="createUserId != null">
+				and r.user_id = #{createUserId}
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by r.${sidx} ${order}
+			</when>
+			<otherwise>
+				order by r.role_id asc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryList3" resultType="io.renren.modules.sys.entity.SysRoleEntity">
+		select r.* from sys_role r
+		<where>
+			<if test="createUserId != null">
+				and r.user_id = #{createUserId}
+			</if>
+			<if test="roleName != null and roleName.trim() != ''">
+				and r.`role_name` like concat('%',#{roleName},'%')
+			</if>
+
+			<!--  数据过滤  -->
+			<if test="createUserId != null">
+				and r.user_id = #{createUserId}
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by r.${sidx} ${order}
+			</when>
+			<otherwise>
+				order by r.role_id asc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
 
 </mapper>

@@ -48,9 +48,8 @@ public class SysRoleController extends AbstractController {
 		
 		//查询列表数据
 		Query query = new Query(params);
-		List<SysRoleEntity> list = sysRoleService.queryList(query);
-		int total = sysRoleService.queryTotal(query);
-		
+		List<SysRoleEntity> list = sysRoleService.queryList3(query);
+		int total = list.size();
 		PageUtils pageUtil = new PageUtils(list, total, query.getLimit(), query.getPage());
 		
 		return R.ok().put("page", pageUtil);
@@ -65,12 +64,15 @@ public class SysRoleController extends AbstractController {
 		Map<String, Object> map = new HashMap<>();
 
 		//如果不是超级管理员，则只查询自己所拥有的角色列表
+        List<SysRoleEntity> list = null;
 		if(getUserId() != Constant.SUPER_ADMIN){
 			map.put("createUserId", getUserId());
-		}
-		List<SysRoleEntity> list = sysRoleService.queryList(map);
-		
-		return R.ok().put("list", list);
+            list = sysRoleService.queryList2(map);
+		}else{
+            list = sysRoleService.queryList3(null);
+        }
+        return R.ok().put("list", list);
+
 	}
 	
 	/**
@@ -96,7 +98,7 @@ public class SysRoleController extends AbstractController {
 	@RequiresPermissions("sys:role:save")
 	public R save(@RequestBody SysRoleEntity role){
 		ValidatorUtils.validateEntity(role);
-		
+		role.setCreateId(getUserId());
 		sysRoleService.save(role);
 		
 		return R.ok();

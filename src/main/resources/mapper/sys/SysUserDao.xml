@@ -48,6 +48,13 @@
 			LEFT JOIN sys_menu m on rm.menu_id = m.menu_id 
 		where ur.user_id = #{userId}
 	</select>
+
+	<select id="queryAllPermsByDept" resultType="string">
+		SELECT m.perms FROM sys_menu m
+		LEFT  JOIN sys_role_menu rm on rm.menu_id = m.menu_id
+		LEFT  JOIN sys_role_dept dept on rm.role_id = dept.role_id
+		WHERE  dept.dept_id = #{deptId}
+	</select>
 	
 	<!-- 查询用户的所有菜单ID --> 
 	<select id="queryAllMenuId" resultType="long">

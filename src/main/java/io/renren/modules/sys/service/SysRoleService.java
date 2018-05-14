@@ -19,6 +19,10 @@ public interface SysRoleService {
 	SysRoleEntity queryObject(Long roleId);
 	
 	List<SysRoleEntity> queryList(Map<String, Object> map);
+
+	List<SysRoleEntity> queryList2(Map<String, Object> map);
+
+    List<SysRoleEntity> queryList3(Map<String, Object> map);
 	
 	int queryTotal(Map<String, Object> map);
 	

@@ -43,6 +43,16 @@ public class SysRoleServiceImpl implements SysRoleService {
 	}
 
 	@Override
+	public List<SysRoleEntity> queryList2(Map<String, Object> map) {
+		return sysRoleDao.queryList2(map);
+	}
+
+    @Override
+    public List<SysRoleEntity> queryList3(Map<String, Object> map) {
+        return sysRoleDao.queryList3(map);
+    }
+
+	@Override
 	@DataFilter(tableAlias = "r", user = false)
 	public int queryTotal(Map<String, Object> map) {
 		return sysRoleDao.queryTotal(map);
@@ -56,9 +66,6 @@ public class SysRoleServiceImpl implements SysRoleService {
 		
 		//保存角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getRoleId(), role.getMenuIdList());
-
-		//保存角色与部门关系
-		//sysRoleDeptService.saveOrUpdate(role.getRoleId(), role.getDeptIdList());
 	}
 
 	@Override

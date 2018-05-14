@@ -43,6 +43,7 @@ public class SysDeptServiceImpl implements SysDeptService {
 	@Override
 	public void update(SysDeptEntity sysDept){
 		sysDeptDao.update(sysDept);
+		sysRoleDeptService.saveOrUpdate(sysDept.getDeptId(), sysDept.getRoleIdList());
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.dao.SysMenuDao;
 import io.renren.modules.sys.dao.SysUserDao;
 import io.renren.modules.sys.entity.SysMenuEntity;
+import io.renren.modules.sys.service.SysUserRoleService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -37,6 +38,8 @@ public class UserRealm extends AuthorizingRealm {
     private SysUserDao sysUserDao;
     @Autowired
     private SysMenuDao sysMenuDao;
+	@Autowired
+	private SysUserRoleService userRoleService;
     
     /**
      * 授权(验证权限时调用)
@@ -56,7 +59,12 @@ public class UserRealm extends AuthorizingRealm {
 				permsList.add(menu.getPerms());
 			}
 		}else{
-			permsList = sysUserDao.queryAllPerms(userId);
+			if(userRoleService.queryRoleIdList(userId).size()>0) {
+				permsList = sysUserDao.queryAllPerms(userId);
+			}else{
+				permsList = sysUserDao.queryAllPermsByDept(sysUserDao.queryObject(userId).getDeptId());
+			}
+
 		}
 
 		//用户权限列表

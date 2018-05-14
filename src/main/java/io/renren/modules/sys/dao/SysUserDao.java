@@ -21,7 +21,8 @@ public interface SysUserDao extends BaseDao<SysUserEntity> {
 	 * @param userId  用户ID
 	 */
 	List<String> queryAllPerms(Long userId);
-	
+
+	List<String> queryAllPermsByDept(Long deptId);
 	/**
 	 * 查询用户的所有菜单ID
 	 */

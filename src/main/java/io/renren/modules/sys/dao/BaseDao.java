@@ -31,6 +31,10 @@ public interface BaseDao<T> {
 	T queryObject(Object id);
 	
 	List<T> queryList(Map<String, Object> map);
+
+	List<T> queryList2(Map<String, Object> map);
+
+    List<T> queryList3(Map<String, Object> map);
 	
 	List<T> queryList(Object id);
 	

@@ -4,13 +4,14 @@ package io.renren.modules.sys.service.impl;
 import io.renren.common.utils.Constant;
 import io.renren.modules.sys.dao.SysMenuDao;
 import io.renren.modules.sys.entity.SysMenuEntity;
-import io.renren.modules.sys.service.SysMenuService;
-import io.renren.modules.sys.service.SysUserService;
+import io.renren.modules.sys.entity.SysUserEntity;
+import io.renren.modules.sys.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,12 @@ public class SysMenuServiceImpl implements SysMenuService {
 	private SysMenuDao sysMenuDao;
 	@Autowired
 	private SysUserService sysUserService;
-	
+	@Autowired
+	private SysUserRoleService userRoleService;
+	@Autowired
+	private SysRoleDeptService roleDeptService;
+	@Autowired
+	private SysRoleMenuService roleMenuService;
 	@Override
 	public List<SysMenuEntity> queryListParentId(Long parentId, List<Long> menuIdList) {
 		List<SysMenuEntity> menuList = queryListParentId(parentId);
@@ -56,7 +62,18 @@ public class SysMenuServiceImpl implements SysMenuService {
 		}
 		
 		//用户菜单列表
-		List<Long> menuIdList = sysUserService.queryAllMenuId(userId);
+		List<Long> menuIdList = new ArrayList<>();
+		if(userRoleService.queryRoleIdList(userId).size()>0) {
+			menuIdList = sysUserService.queryAllMenuId(userId);
+		}else {
+			List<Long> roleList;
+			SysUserEntity user = sysUserService.queryObject(userId);
+			roleList = roleDeptService.queryDeptIdList(user.getDeptId());
+			for(Long roleId:roleList){
+				List<Long> menuList = roleMenuService.queryMenuIdList(roleId);
+				menuIdList.addAll(menuList);
+			}
+		}
 		return getAllMenuList(menuIdList);
 	}
 	

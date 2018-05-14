@@ -24,6 +24,10 @@ public class SysRoleEntity implements Serializable {
 	private Long roleId;
 
 	/**
+	 * 创建角色id
+	 */
+	private Long createId;
+	/**
 	 * 角色名称
 	 */
 	@NotBlank(message="角色名称不能为空")
@@ -49,6 +53,7 @@ public class SysRoleEntity implements Serializable {
 	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
+
 
 	/**
 	 * 获取：
@@ -106,4 +111,11 @@ public class SysRoleEntity implements Serializable {
 		this.menuIdList = menuIdList;
 	}
 
+	public Long getCreateId() {
+		return createId;
+	}
+
+	public void setCreateId(Long creatId) {
+		this.createId = creatId;
+	}
 }
