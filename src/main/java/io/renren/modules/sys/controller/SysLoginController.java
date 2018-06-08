@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.renren.common.utils.R;
@@ -28,10 +29,7 @@ import com.google.code.kaptcha.Producer;
 
 /**
  * 登录相关
- * 
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2016年11月10日 下午1:15:31
+ *
  */
 @Controller
 public class SysLoginController {
@@ -59,7 +57,7 @@ public class SysLoginController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/sys/login", method = RequestMethod.POST)
-	public R login(String username, String password, String captcha)throws IOException {
+	public R login(HttpServletRequest request,String username, String password, String captcha)throws IOException {
 		String kaptcha = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
 		if(!captcha.equalsIgnoreCase(kaptcha)){
 			return R.error("验证码不正确");
@@ -74,11 +72,11 @@ public class SysLoginController {
 		}catch (IncorrectCredentialsException e) {
 			return R.error("账号或密码不正确");
 		}catch (LockedAccountException e) {
-			return R.error("账号已被锁定,请联系管理员");
+			return R.error("账号已被禁用,请联系管理员");
 		}catch (AuthenticationException e) {
 			return R.error("账户验证失败");
 		}
-	    
+		request.getSession().setAttribute("username",username);
 		return R.ok();
 	}
 	

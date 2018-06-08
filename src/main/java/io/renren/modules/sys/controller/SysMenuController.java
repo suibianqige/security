@@ -5,7 +5,11 @@ import io.renren.common.exception.RRException;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.R;
 import io.renren.modules.sys.entity.SysMenuEntity;
+import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysMenuService;
+import io.renren.modules.sys.service.SysRoleMenuService;
+import io.renren.modules.sys.service.SysUserRoleService;
+import io.renren.modules.sys.service.SysUserService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * 系统菜单
@@ -29,7 +33,13 @@ import java.util.List;
 public class SysMenuController extends AbstractController {
 	@Autowired
 	private SysMenuService sysMenuService;
-
+	@Autowired
+	private SysUserService sysUserService;
+	@Autowired
+	private SysUserRoleService userRoleService;
+	@Autowired
+	private SysRoleMenuService roleMenuService;
+	private static final String ADMIN ="1";
 	/**
 	 * 导航菜单
 	 */
@@ -40,14 +50,42 @@ public class SysMenuController extends AbstractController {
 	}
 	
 	/**
-	 * 所有菜单列表
+	 * 菜单列表
 	 */
 	@RequestMapping("/list")
 	@RequiresPermissions("sys:menu:list")
-	public List<SysMenuEntity> list(){
-		List<SysMenuEntity> menuList = sysMenuService.queryList(new HashMap<String, Object>());
+	public List<SysMenuEntity> list(HttpServletRequest request){
+		String username = (String)request.getSession().getAttribute("username");
+		SysUserEntity entity = sysUserService.queryByUserName(username);
+		List<Long> roleIds = userRoleService.queryRoleIdList(entity.getUserId());
+		Set<Long> sets =new HashSet<>();
+		List<SysMenuEntity> menuList = new ArrayList<>();
+		if(roleIds.size()>0) {
+			for (Long id : roleIds) {
+				List<Long> menuIds = roleMenuService.queryMenuIdList(id);
+				for (Long menu : menuIds) {
+					sets.add(menu);
+				}
+			}
+			for (Long it : sets) {
+				menuList.add(sysMenuService.queryObject(it));
+			}
+			return menuList;
+		}else{
+			if(entity.getUserId().toString().equals(ADMIN)){
+				return sysMenuService.queryList(new HashMap<String, Object>());
+			}
+			return null;
+		}
+	}
 
-		return menuList;
+	/**
+	 * 所有菜单列表
+	 */
+	@RequestMapping("/query")
+	@RequiresPermissions("sys:menu:queryAll")
+	public List<SysMenuEntity> query(HttpServletRequest request){
+		return sysMenuService.queryList(new HashMap<String, Object>());
 	}
 	
 	/**

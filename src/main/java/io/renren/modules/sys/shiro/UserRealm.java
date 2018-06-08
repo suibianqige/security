@@ -48,9 +48,7 @@ public class UserRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		SysUserEntity user = (SysUserEntity)principals.getPrimaryPrincipal();
 		Long userId = user.getUserId();
-		
 		List<String> permsList = null;
-		
 		//系统管理员，拥有最高权限
 		if(userId == 1){
 			List<SysMenuEntity> menuList = sysMenuDao.queryList(new HashMap<String, Object>());
@@ -64,9 +62,7 @@ public class UserRealm extends AuthorizingRealm {
 			}else{
 				permsList = sysUserDao.queryAllPermsByDept(sysUserDao.queryObject(userId).getDeptId());
 			}
-
 		}
-
 		//用户权限列表
 		Set<String> permsSet = new HashSet<String>();
 		for(String perms : permsList){
@@ -75,7 +71,6 @@ public class UserRealm extends AuthorizingRealm {
 			}
 			permsSet.addAll(Arrays.asList(perms.trim().split(",")));
 		}
-		
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		info.setStringPermissions(permsSet);
 		return info;
@@ -96,11 +91,15 @@ public class UserRealm extends AuthorizingRealm {
         if(user == null) {
             throw new UnknownAccountException("账号或密码不正确");
         }
+        if(user.getStatus() == 0){
+        	throw new LockedAccountException();
+		}
 
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(user.getSalt()), getName());
         return info;
 	}
 
+	//盐值加密  SHA-256
 	@Override
 	public void setCredentialsMatcher(CredentialsMatcher credentialsMatcher) {
 		HashedCredentialsMatcher shaCredentialsMatcher = new HashedCredentialsMatcher();

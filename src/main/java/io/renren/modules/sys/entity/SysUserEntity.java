@@ -1,6 +1,7 @@
 package io.renren.modules.sys.entity;
 
 
+import io.renren.common.annotation.Phone;
 import io.renren.common.validator.group.AddGroup;
 import io.renren.common.validator.group.UpdateGroup;
 import org.hibernate.validator.constraints.Email;
@@ -13,10 +14,7 @@ import java.util.List;
 
 /**
  * 系统用户
- * 
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2016年9月18日 上午9:28:55
+ *
  */
 public class SysUserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -53,6 +51,7 @@ public class SysUserEntity implements Serializable {
 	/**
 	 * 手机号
 	 */
+	@Phone(regex = "^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\\d{8})$", groups = {AddGroup.class, UpdateGroup.class})
 	private String mobile;
 
 	/**
@@ -73,7 +72,7 @@ public class SysUserEntity implements Serializable {
 	/**
 	 * 部门ID
 	 */
-	@NotNull(message="部门不能为空", groups = {AddGroup.class, UpdateGroup.class})
+	@NotNull(message="部门不能为空", groups = {AddGroup.class,UpdateGroup.class})
 	private Long deptId;
 
 	/**

@@ -27,18 +27,15 @@ public class SysRoleDeptServiceImpl implements SysRoleDeptService {
 	@Override
 	@Transactional
 	public void saveOrUpdate(Long deptId, List<Long> roleIdList) {
-		//先删除角色与菜单关系
+		//先删除角色与部门关系
 		sysRoleDeptDao.delete(deptId);
-
-		if(roleIdList.size() == 0){
-			return ;
-		}
-
 		//保存角色与菜单关系
 		Map<String, Object> map = new HashMap<>();
 		map.put("deptId", deptId);
 		map.put("roleIdList", roleIdList);
-		sysRoleDeptDao.save(map);
+		if(roleIdList.size()!=0) {
+			sysRoleDeptDao.save(map);
+		}
 	}
 
 	@Override
